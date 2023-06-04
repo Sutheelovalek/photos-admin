@@ -4,6 +4,7 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import Spinner from "./Spinner";
 
 export default function ProductFrom({
     _id,
@@ -15,8 +16,9 @@ export default function ProductFrom({
     const [title, setTitle] = useState(existingTitle || '');
     const [description, setDescription] = useState(existingDescription || '');
     const [price, setPrice] = useState(existingPrice || '');
-    const [goToProducts, setGoToProducts] = useState(false);
     const [images, setImages] = useState(existingImages || []);
+    const [goToProducts, setGoToProducts] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
     const router = useRouter();
     async function saveProduct(ev) {
         ev.preventDefault();
@@ -36,6 +38,7 @@ export default function ProductFrom({
     async function uploadImages(ev) {
         const files = ev.target?.files;
         if (files?.length > 0) {
+            setIsUploading(true);
           const data = new FormData();
           for (const file of files) {
             data.append('file', file);
@@ -44,6 +47,7 @@ export default function ProductFrom({
           setImages(oldImages => {
             return [...oldImages, ...res.data.links];
           });
+          setIsUploading(false);
         }
       }
       
@@ -65,6 +69,11 @@ export default function ProductFrom({
                             className="rounded-lg" />
                         </div>
                     ))}
+                    {isUploading && (
+                        <div className="h-24 flex items-center">
+                            <Spinner />
+                        </div>
+                    )}
                     <label 
                     className="w-24 h-24 bg-gray-100 cursor-pointer
                     flex flex-col justify-center items-center
