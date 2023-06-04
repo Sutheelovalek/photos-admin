@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable jsx-a11y/alt-text */
 
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -8,16 +10,17 @@ export default function ProductFrom({
     title: existingTitle, 
     description: existingDescription, 
     price: existingPrice,
-    images,
+    images: existingImages,
 }) {
     const [title, setTitle] = useState(existingTitle || '');
     const [description, setDescription] = useState(existingDescription || '');
     const [price, setPrice] = useState(existingPrice || '');
     const [goToProducts, setGoToProducts] = useState(false);
+    const [images, setImages] = useState(existingImages || []);
     const router = useRouter();
     async function saveProduct(ev) {
         ev.preventDefault();
-        const data = {title, description, price}
+        const data = {title, description, price, images}
         if (_id) {
             //update
             await axios.put('/api/products', {...data,_id});
@@ -37,11 +40,10 @@ export default function ProductFrom({
           for (const file of files) {
             data.append('file', file);
           }
-          const res = await fetch('/api/upload', {
-            method: 'POST',
-            body: data,
+          const res = await axios.post('/api/upload', data);
+          setImages(oldImages => {
+            return [...oldImages, ...res.data.links];
           });
-          console.log(res);
         }
       }
       
@@ -56,7 +58,13 @@ export default function ProductFrom({
                 <label>
                     Photos
                 </label>
-                <div className="mb-2">
+                <div className="mb-2 flex flex-wrap gap-2">
+                    {!!images?.length && images.map(link => (
+                        <div key={link} className="h-24">
+                            <img src={link} alt='product image'
+                            className="rounded-lg" />
+                        </div>
+                    ))}
                     <label 
                     className="w-24 h-24 bg-gray-100 cursor-pointer
                     flex flex-col justify-center items-center
@@ -69,9 +77,6 @@ export default function ProductFrom({
                     onChange={uploadImages}
                     type="file" className="hidden"/>
                     </label>
-                    {!images?.length && (
-                        <div>No photos in this products</div>
-                    )}
                 </div>
             <label>Description</label>
             <textarea 
