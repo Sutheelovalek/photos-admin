@@ -20,7 +20,7 @@ return (
     <table className="basic mt-2">
         <thead>
             <tr>
-                <td>Product name</td>
+                <td>Photo name</td>
                 <td></td>
             </tr>
         </thead>
