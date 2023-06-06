@@ -79,6 +79,7 @@ function Categories({swal}) {
                     <tr>
                         <td>Category name</td>
                         <td>Parent category</td>
+                        <td></td>
                     </tr>
                 </thead>
                 <tbody>
