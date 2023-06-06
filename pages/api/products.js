@@ -30,11 +30,7 @@ export default async function handle(req, res) {
         await Product.deleteOne({_id:req.query?.id});
         res.json(true);
     }
-
    }
-
-
-
 }
 
   
